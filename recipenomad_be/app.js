@@ -30,7 +30,7 @@ app.get('/', (req, res) => {
 // FOR USER OPERATIONS
 
 const User = require('./models/User');
-const { generateToken, hashPassword, validatePassword } = require('./utils/auth');
+const { generateToken, hashPassword, validatePassword, verifyToken } = require('./utils/auth');
 
 // Create a new user
 app.post('/users', async (req, res) => {
@@ -66,6 +66,22 @@ app.post('/users/login', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+// Get user data for profile
+app.get('/users/profile', verifyToken, async (req, res) => {
+    try {
+        // Use req.userId, which is set by the verifyToken middleware
+        const user = await User.findById(req.userId).select('-password'); // Exclude password
+        if (!user) {
+            return res.status(404).json({ error: 'User not found' });
+        }
+        res.json(user);
+    } catch (err) {
+        console.error(err);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+});
+
 
 // Update user profile
 app.put('/users/:id', async (req, res) => {
