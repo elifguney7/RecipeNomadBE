@@ -4,17 +4,17 @@ const mongoose = require('mongoose');
 //     name: String,
 //     quantity: String
 //   });
-  
-  const recipeSchema = new mongoose.Schema({
-    title: String,
-    ingredients: String,
-    media: [{
-      url: String,
-      type: String
-    }],
-    instructions: String
-  });
-  
-  const Recipe = mongoose.model('Recipe', recipeSchema);
-  module.exports = Recipe;
-  
+const mediaSchema = new mongoose.Schema({
+  url: String,
+  type: String
+});
+
+const recipeSchema = new mongoose.Schema({
+  title: String,
+  ingredients: String,
+  media: [mediaSchema],
+  instructions: String
+});
+
+const Recipe = mongoose.model('Recipe', recipeSchema);
+module.exports = Recipe;

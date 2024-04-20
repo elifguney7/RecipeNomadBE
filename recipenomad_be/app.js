@@ -114,7 +114,7 @@ const storage = multer.diskStorage({
 // Initialize multer with file filter and limits
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 10000000 }, // 10MB limit
+  limits: { fileSize: 50000000 }, // 10MB limit
   fileFilter: function(req, file, cb) {
     checkFileType(file, cb);
   }
@@ -136,12 +136,11 @@ function checkFileType(file, cb) {
   }
 }
 
-// POST route to create a new recipe with media
 app.post('/recipes', upload.array('media', 5), async (req, res) => {
   try {
     const { title, ingredients, instructions, category } = req.body;
     const media = req.files.map(file => ({
-      url: file.path, // Save the path as URL
+      url: file.path.replace(/\\/g, '/'), // normalize the path
       type: file.mimetype
     }));
 
@@ -153,6 +152,8 @@ app.post('/recipes', upload.array('media', 5), async (req, res) => {
       category
     });
 
+    console.log("Recipe Data:", { title, ingredients, instructions, media });
+    
     await newRecipe.save();
     res.status(201).json(newRecipe);
   } catch (error) {
@@ -160,6 +161,7 @@ app.post('/recipes', upload.array('media', 5), async (req, res) => {
     res.status(500).json({ message: 'Failed to create recipe', error });
   }
 });
+
 
 // Get all Recipes
 app.get('/recipes', async (req, res) => {
