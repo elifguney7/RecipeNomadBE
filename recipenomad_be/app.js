@@ -114,7 +114,7 @@ const storage = multer.diskStorage({
 // Initialize multer with file filter and limits
 const upload = multer({
   storage: storage,
-  limits: { fileSize: 50000000 }, // 10MB limit
+  limits: { fileSize: 5000000000 }, // 10MB limit
   fileFilter: function(req, file, cb) {
     checkFileType(file, cb);
   }
@@ -136,20 +136,22 @@ function checkFileType(file, cb) {
   }
 }
 
-app.post('/recipes', upload.array('media', 5), async (req, res) => {
+app.post('/recipes', verifyToken, upload.array('media', 5), async (req, res) => {
   try {
     const { title, ingredients, instructions, category } = req.body;
     const media = req.files.map(file => ({
       url: file.path.replace(/\\/g, '/'), // normalize the path
       type: file.mimetype
     }));
+    const userId = req.userId; // Assume `userId` is extracted from the JWT token
 
     const newRecipe = new Recipe({
       title,
       ingredients,
       media,
       instructions,
-      category
+      category,
+      userId
     });
 
     console.log("Recipe Data:", { title, ingredients, instructions, media });
@@ -162,11 +164,11 @@ app.post('/recipes', upload.array('media', 5), async (req, res) => {
   }
 });
 
-
-// Get all Recipes
-app.get('/recipes', async (req, res) => {
+// Get all Recipes of the logged-in user
+app.get('/recipes', verifyToken, async (req, res) => {
   try {
-    const recipes = await Recipe.find();
+    const userId = req.userId; // Extracted by verifyToken middleware
+    const recipes = await Recipe.find({ userId: userId }); // Filter recipes by userId
     res.send(recipes);
   } catch (error) {
     res.status(500).send(error);

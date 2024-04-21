@@ -7,7 +7,6 @@ const generateToken = user => {
     return jwt.sign({ id: user._id }, secretKey, { expiresIn: '1d' });
 };
 
-
 const hashPassword = async password => {
   const salt = await bcrypt.genSalt(10);
   return await bcrypt.hash(password, salt);
@@ -42,8 +41,6 @@ const verifyToken = (req, res, next) => {
       }
     });
   };
-  
 
-  
   module.exports = { generateToken, hashPassword, validatePassword, verifyToken };
 
