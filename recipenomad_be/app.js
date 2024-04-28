@@ -139,6 +139,8 @@ function checkFileType(file, cb) {
 app.post('/recipes', verifyToken, upload.array('media', 5), async (req, res) => {
   try {
     const { title, ingredients, instructions, category } = req.body;
+    const instructionSteps = JSON.parse(instructions); // assuming instructions are sent as JSON string
+
     const media = req.files.map(file => ({
       url: file.path.replace(/\\/g, '/'), // normalize the path
       type: file.mimetype
@@ -149,7 +151,7 @@ app.post('/recipes', verifyToken, upload.array('media', 5), async (req, res) => 
       title,
       ingredients,
       media,
-      instructions,
+      instructions: instructionSteps,
       category,
       userId
     });

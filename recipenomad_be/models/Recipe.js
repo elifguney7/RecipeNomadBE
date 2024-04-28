@@ -10,11 +10,18 @@ const mediaSchema = new mongoose.Schema({
   type: String
 });
 
+// New instruction schema
+const instructionSchema = new mongoose.Schema({
+  step: String,
+  description: String
+});
+
+
 const recipeSchema = new mongoose.Schema({
   title: String,
   ingredients: String,
   media: [mediaSchema],
-  instructions: String,
+  instructions: [instructionSchema],
   category: { type: String },
   userId: { type: Schema.Types.ObjectId, ref: 'User' } 
 }, { timestamps: true }); 
