@@ -139,6 +139,7 @@ function checkFileType(file, cb) {
 app.post('/recipes', verifyToken, upload.array('media', 5), async (req, res) => {
   try {
     const { title, ingredients, instructions, category } = req.body;
+    const parsedIngredients = JSON.parse(ingredients);
     const instructionSteps = JSON.parse(instructions); // assuming instructions are sent as JSON string
 
     const media = req.files.map(file => ({
@@ -149,7 +150,7 @@ app.post('/recipes', verifyToken, upload.array('media', 5), async (req, res) => 
 
     const newRecipe = new Recipe({
       title,
-      ingredients,
+      ingredients: parsedIngredients,
       media,
       instructions: instructionSteps,
       category,

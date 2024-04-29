@@ -1,25 +1,24 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
-// const ingredientSchema = new mongoose.Schema({
-//     name: String,
-//     quantity: String
-//   });
 const mediaSchema = new mongoose.Schema({
   url: String,
   type: String
 });
 
-// New instruction schema
 const instructionSchema = new mongoose.Schema({
   step: String,
   description: String
 });
 
+const ingredientSchema = new mongoose.Schema({
+  name: String,
+  quantity: String
+});
 
 const recipeSchema = new mongoose.Schema({
   title: String,
-  ingredients: String,
+  ingredients: [ingredientSchema],
   media: [mediaSchema],
   instructions: [instructionSchema],
   category: { type: String },
