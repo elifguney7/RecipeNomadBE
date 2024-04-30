@@ -217,38 +217,6 @@ app.delete('/recipes/:id', async (req, res) => {
   }
 });
 
-// FOR RECIPE OPERATIONS
 
-const VideoInteraction = require('./models/VideoInteraction'); 
-
-// Endpoint to start video
-app.post('/api/video/start', async (req, res) => {
-  const { userId, recipeId } = req.body;
-  const newInteraction = new VideoInteraction({
-      userId,
-      recipeId,
-      isVoiceActivated: true,
-      videoControl: {
-          state: 'playing',
-          currentTime: 0,
-          playbackSpeed: 1
-      }
-  });
-  await newInteraction.save();
-  res.status(201).send('Video started');
-});
-
-// Endpoint to stop video
-app.post('/api/video/stop', async (req, res) => {
-  const { interactionId } = req.body;
-  const interaction = await VideoInteraction.findById(interactionId);
-  if (interaction) {
-      interaction.videoControl.state = 'stopped';
-      await interaction.save();
-      res.status(200).send('Video stopped');
-  } else {
-      res.status(404).send('Interaction not found');
-  }
-});
 
 module.exports = app;
